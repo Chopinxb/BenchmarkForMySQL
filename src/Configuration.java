@@ -5,11 +5,7 @@
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Properties;
-import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
 public final class Configuration {
@@ -38,30 +34,8 @@ public final class Configuration {
         fis.close();
         logger.info("Configuration loaded from file: " + confFile);
 
-        this.processes = Collections.unmodifiableList(loadProcessList());
     }
 
-    /**
-     * Creates a configuration with the process list, and an empty set of
-     * optional properties.
-     *
-     * @param processes
-     */
-    public Configuration(List<PID> processes) {
-        this.processes = processes;
-    }
-
-    public int getN() {
-        return processes.size();
-    }
-
-    public List<PID> getProcesses() {
-        return processes;
-    }
-
-    public PID getProcess(int id) {
-        return processes.get(id);
-    }
 
     public boolean containsKey(String key) {
         return configuration.containsKey(key);
@@ -114,38 +88,6 @@ public final class Configuration {
             return defValue;
         }
         return str;
-    }
-
-    private List<PID> loadProcessList() {
-        List<PID> processes = new ArrayList<PID>();
-        int i = 0;
-        while (true) {
-            String line = configuration.getProperty("process." + i);
-            if (line == null) {
-                break;
-            }
-            StringTokenizer st = new StringTokenizer(line, ":");
-            PID pid = new PID(i, st.nextToken(), Integer.parseInt(st.nextToken()),
-                    Integer.parseInt(st.nextToken()));
-            processes.add(pid);
-            logger.info(pid.toString());
-            i++;
-        }
-        return processes;
-    }
-
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Processes:\n");
-        for (PID p : processes) {
-            sb.append("  ").append(p).append("\n");
-        }
-        sb.append("Properties:\n");
-        for (Object key : configuration.keySet()) {
-            sb.append("  ").append(key).append("=").append(configuration.get(key)).append("\n");
-        }
-
-        return sb.toString();
     }
 
     public double getDoubleProperty(String key, double defultValue) {

@@ -3,33 +3,43 @@
  */
 import java.sql.*;
 public class Dao {
-    public String url = "";
-    public String user = "";
-    public String password = "";
-    public String driver = "";
+    private String url;
+    private String user;
+    private String password ;
+    private String driver ;
+    private boolean handlerResult;
 
+    public Dao(){
+        TestDescroptor descroptor = TestDescroptor.getInstance();
+        this.url = descroptor.url;
+        this.user = descroptor.user;
+        this.password = descroptor.password;
+        this.driver = descroptor.driver;
+        this.handlerResult = descroptor.handleResult;
 
-    public void connect(){
+    }
+    public void query(String query){
         try {
             Class.forName(driver);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-//        try{
-//            //调用Class.forName()方法加载驱动程序
-//            Class.forName("com.mysql.jdbc.Driver");
-//            System.out.println("成功加载MySQL驱动！");
-//        }catch(ClassNotFoundException e1){
-//            System.out.println("找不到MySQL驱动!");
-//            e1.printStackTrace();
-//        }
 
-//        String url="jdbc:mysql://localhost:3306/mysql";    //JDBC的URL
         Connection conn;
         try {
             conn = DriverManager.getConnection(url, user, password);
             Statement stmt = conn.createStatement(); //创建Statement对象
-            System.out.print("成功连接到数据库！");
+            if(!handlerResult){
+                stmt.executeQuery(query);
+            }
+            else{
+                ResultSet  resultSet = stmt.executeQuery(query);
+                int num = 0;
+                while(resultSet.next()){
+                    num++;
+                }
+                System.out.println("This query has " + num +"records");
+            }
             stmt.close();
             conn.close();
         } catch (SQLException e){
