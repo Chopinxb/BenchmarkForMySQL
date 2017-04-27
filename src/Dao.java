@@ -28,9 +28,10 @@ public class Dao {
         Connection conn;
         try {
             conn = DriverManager.getConnection(url, user, password);
-            Statement stmt = conn.createStatement(); //创建Statement对象
+            Statement stmt = conn.createStatement();
             if(!handlerResult){
                 stmt.executeQuery(query);
+                System.out.println(query+"##### SUCCESS ####");
             }
             else{
                 ResultSet  resultSet = stmt.executeQuery(query);
@@ -38,7 +39,7 @@ public class Dao {
                 while(resultSet.next()){
                     num++;
                 }
-                System.out.println("This query has " + num +"records");
+                System.out.println(query+"####This query has " + num +" records#####");
             }
             stmt.close();
             conn.close();
